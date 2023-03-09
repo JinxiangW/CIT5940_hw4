@@ -60,55 +60,55 @@ public class TestBlockly
      */
     public static void main(String[] args)
     {
-        //(1) create a new board/Game with the max depth 
-        
+        //(1) create a new board/Game with the max depth
+
         IGame board = new Game(3, Color.RED);
-       
+
         //(2) randomly initialize the board
         // and get the root of the quad tree
-        
-         IBlock root = board.getRoot();
-        //(3) create a new game frame (GUI) 
+
+        IBlock root = board.getRoot();
+        //(3) create a new game frame (GUI)
         GameFrame game = new GameFrame();
         //(4)Add the root of the quadtree to the GUI
         game.addQuad(root);
         //(5) display the GUI
         game.display();
-        int id = 0;
-
-        //(6) initialize a loop that will:
-        //ask the user to select an operation 
-        // (1 for swap, 2 for rotate, 3 for smash)
-        Scanner in = new Scanner(System.in);
-        while (true)
-        {
-            System.out.println(
-                "ID of the operation 1 for swap, 2 for rotate, 3 for smash");
-            // Scanner in = new Scanner(System.in);
-            id = in.nextInt();
-            switch (id)
-            {
-                case 1:
-                    swap_operation(in, board, root);
-                    game.refresh_board(root);
-                    break;
-                case 2:
-                    rotate_operation(in, board, root);
-                    game.refresh_board(root);
-                    break;
-                case 3:
-                    smash_operation(in, board, root);
-                    game.refresh_board(root);
-                    break;
-                default:
-                    break;
-            }
-
-            int score = board.perimeterScore();
-            System.out.println("Score:  " + score);
-            
-        }
-        
+//        int id = 0;
+//
+//        //(6) initialize a loop that will:
+//        //ask the user to select an operation
+//        // (1 for swap, 2 for rotate, 3 for smash)
+//        Scanner in = new Scanner(System.in);
+//        while (true)
+//        {
+//            System.out.println(
+//                "ID of the operation 1 for swap, 2 for rotate, 3 for smash");
+//            // Scanner in = new Scanner(System.in);
+//            id = in.nextInt();
+//            switch (id)
+//            {
+//                case 1:
+//                    swap_operation(in, board, root);
+//                    game.refresh_board(root);
+//                    break;
+//                case 2:
+//                    rotate_operation(in, board, root);
+//                    game.refresh_board(root);
+//                    break;
+//                case 3:
+//                    smash_operation(in, board, root);
+//                    game.refresh_board(root);
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//            int score = board.perimeterScore();
+//            System.out.println("Score:  " + score);
+//
+//        }
+//
     }
 
 }

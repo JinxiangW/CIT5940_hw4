@@ -1,5 +1,7 @@
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Block implements IBlock{
 
@@ -94,6 +96,35 @@ public class Block implements IBlock{
      */
     @Override
     public void smash(int maxDepth) {
+        if (depth == maxDepth) return;
+        int tx = topLeft.getX(), ty = topLeft.getY(),
+                bx = botRight.getX(), by = botRight.getY();
+
+        topLeftTree = new Block(topLeft,
+                new Point((tx + bx) / 2, (ty + by) / 2),
+                depth + 1,
+                this);
+        topRightTree = new Block(new Point((tx + bx) / 2, ty),
+                new Point(bx, (ty + by) / 2),
+                depth + 1,
+                this);
+        botLeftTree = new Block(new Point(tx, (ty + by) / 2),
+                new Point((tx + bx) / 2, by),
+                depth + 1,
+                this);
+        botRightTree = new Block(new Point((tx + bx) / 2, (ty + by) / 2),
+                botRight,
+                depth + 1,
+                this);
+
+        this.color = null;
+        Random rd = new Random();
+
+        topLeftTree.setColor(COLORS[rd.nextInt(8)]);
+        topRightTree.setColor(COLORS[rd.nextInt(8)]);
+        botLeftTree.setColor(COLORS[rd.nextInt(8)]);
+        botRightTree.setColor(COLORS[rd.nextInt(8)]);
+
 
     }
 
@@ -112,7 +143,12 @@ public class Block implements IBlock{
      */
     @Override
     public List<IBlock> children() {
-        return null;
+        List<IBlock> ret = new ArrayList<>();
+        ret.add(topLeftTree);
+        ret.add(topRightTree);
+        ret.add(botRightTree);
+        ret.add(botLeftTree);
+        return ret;
     }
 
     /**
@@ -129,7 +165,27 @@ public class Block implements IBlock{
      */
     @Override
     public void rotate() {
+        IBlock top = parent;
+        if (top == null) return;
+        int dist = topLeft.getX() - botRight.getX();
+        ((Block) top.getTopLeftTree()).rotateHelper(dist, 0);
+        ((Block) top.getTopRightTree()).rotateHelper(0, dist);
+        ((Block) top.getBotLeftTree()).rotateHelper(-dist, 0);
+        ((Block) top.getBotRightTree()).rotateHelper(0, -dist);
+    }
 
+    public void rotateHelper(int dx, int dy) {
+        if (!isLeaf()) {
+            for (IBlock i : this.children()) {
+                ((Block) i).rotateHelper (dx, dy);
+            }
+        }
+        Point tl = this.topLeft,
+                br = this.botRight;
+        tl.setX(tl.getX() + dx);
+        tl.setY(tl.getY() + dy);
+        br.setX(br.getX() + dx);
+        br.setY(br.getY() + dy);
     }
 
 
@@ -144,42 +200,45 @@ public class Block implements IBlock{
 
     @Override
     public Color getColor() {
-        return null;
+        return color;
     }
 
     @Override
     public Point getTopLeft() {
-        return null;
+        return topLeft;
     }
 
     @Override
     public Point getBotRight() {
-        return null;
+        return botRight;
     }
 
     @Override
     public boolean isLeaf() {
-        return false;
+        for (IBlock i : children()) {
+            if (i != null) return false;
+        }
+        return true;
     }
 
     @Override
     public IBlock getTopLeftTree() {
-        return null;
+        return topLeftTree;
     }
 
     @Override
     public IBlock getTopRightTree() {
-        return null;
+        return topRightTree;
     }
 
     @Override
     public IBlock getBotLeftTree() {
-        return null;
+        return botLeftTree;
     }
 
     @Override
     public IBlock getBotRightTree() {
-        return null;
+        return botRightTree;
     }
 
 
