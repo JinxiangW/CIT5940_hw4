@@ -100,7 +100,7 @@ public class Block implements IBlock{
         int tx = topLeft.getX(), ty = topLeft.getY(),
                 bx = botRight.getX(), by = botRight.getY();
 
-        topLeftTree = new Block(topLeft,
+        topLeftTree = new Block(new Point(tx, ty),
                 new Point((tx + bx) / 2, (ty + by) / 2),
                 depth + 1,
                 this);
@@ -113,7 +113,7 @@ public class Block implements IBlock{
                 depth + 1,
                 this);
         botRightTree = new Block(new Point((tx + bx) / 2, (ty + by) / 2),
-                botRight,
+                new Point(bx, by),
                 depth + 1,
                 this);
 
@@ -124,8 +124,6 @@ public class Block implements IBlock{
         topRightTree.setColor(COLORS[rd.nextInt(8)]);
         botLeftTree.setColor(COLORS[rd.nextInt(8)]);
         botRightTree.setColor(COLORS[rd.nextInt(8)]);
-
-
     }
 
     /**
@@ -165,27 +163,44 @@ public class Block implements IBlock{
      */
     @Override
     public void rotate() {
-        IBlock top = parent;
+        IBlock top = parent,
+                tl = top.getTopLeftTree(),
+                tr = top.getTopRightTree(),
+                br = top.getBotRightTree(),
+                bl = top.getBotLeftTree();
+
         if (top == null) return;
-        int dist = topLeft.getX() - botRight.getX();
-        ((Block) top.getTopLeftTree()).rotateHelper(dist, 0);
-        ((Block) top.getTopRightTree()).rotateHelper(0, dist);
-        ((Block) top.getBotLeftTree()).rotateHelper(-dist, 0);
-        ((Block) top.getBotRightTree()).rotateHelper(0, -dist);
+        int dist = botRight.getX() - topLeft.getX();
+//        System.out.println(dist + " " + -dist);
+
+        ((Block) tl).rotateHelper(dist, 0);
+        ((Block) top).setTopRightTree(tl);
+
+
+        ((Block) tr).rotateHelper(0, dist);
+        ((Block) top).setBotRightTree(tr);
+
+        ((Block) br).rotateHelper(-dist, 0);
+        ((Block) top).setBotLeftTree(br);
+
+        ((Block) bl).rotateHelper(0, -dist);
+        ((Block) top).setTopLeftTree(bl);
     }
 
     public void rotateHelper(int dx, int dy) {
+        Point tl = this.topLeft,
+                br = this.botRight;
+//        System.out.println(tl.getX() + " " + tl.getY() + ", " + + br.getX() + " " + br.getY());
+        tl.setX(tl.getX() + dx);
+        tl.setY(tl.getY() + dy);
+        br.setX(br.getX() + dx);
+        br.setY(br.getY() + dy);
+//        System.out.println(dx + " " + dy + ", " + tl.getX() + " " + tl.getY() + ", " + br.getX() + " " + br.getY());
         if (!isLeaf()) {
             for (IBlock i : this.children()) {
                 ((Block) i).rotateHelper (dx, dy);
             }
         }
-        Point tl = this.topLeft,
-                br = this.botRight;
-        tl.setX(tl.getX() + dx);
-        tl.setY(tl.getY() + dy);
-        br.setX(br.getX() + dx);
-        br.setY(br.getY() + dy);
     }
 
 
@@ -221,6 +236,21 @@ public class Block implements IBlock{
         return true;
     }
 
+    public IBlock getParent() {
+        return parent;
+    }
+
+    public int getID() {
+        int id = 0;
+        for (IBlock i : parent.children()) {
+            if (i == this) {
+                System.out.println("id: " + id);
+                return id;
+            }
+            id++;
+        }
+        return -1;
+    }
     @Override
     public IBlock getTopLeftTree() {
         return topLeftTree;
@@ -273,5 +303,29 @@ public class Block implements IBlock{
 
     public void setParent(IBlock parent) {
         this.parent = parent;
+    }
+
+    public void setChild(int id, IBlock blk) {
+        switch(id) {
+            case(0):
+                topLeftTree = blk;
+                ((Block) blk).setParent(this);
+                break;
+
+            case(1):
+                topRightTree = blk;
+                ((Block) blk).setParent(this);
+                break;
+
+            case(2):
+                botRightTree = blk;
+                ((Block) blk).setParent(this);
+                break;
+
+            case(3):
+                botLeftTree = blk;
+                ((Block) blk).setParent(this);
+                break;
+        }
     }
 }

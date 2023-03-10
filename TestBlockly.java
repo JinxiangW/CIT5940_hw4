@@ -35,6 +35,7 @@ public class TestBlockly
         int id = in.nextInt();
         IBlock b = game.getBlock(id);
         b.rotate();
+        ((Game) game).updateIDs();
     }
 
 
@@ -51,6 +52,7 @@ public class TestBlockly
         int id = in.nextInt();
         IBlock b = game.getBlock(id);
         b.smash(game.maxDepth()); // pass max depth variable
+        ((Game) game).updateIDs();
     }
 
 
@@ -74,41 +76,40 @@ public class TestBlockly
         game.addQuad(root);
         //(5) display the GUI
         game.display();
-//        int id = 0;
-//
-//        //(6) initialize a loop that will:
-//        //ask the user to select an operation
-//        // (1 for swap, 2 for rotate, 3 for smash)
-//        Scanner in = new Scanner(System.in);
-//        while (true)
-//        {
-//            System.out.println(
-//                "ID of the operation 1 for swap, 2 for rotate, 3 for smash");
-//            // Scanner in = new Scanner(System.in);
-//            id = in.nextInt();
-//            switch (id)
-//            {
-//                case 1:
-//                    swap_operation(in, board, root);
-//                    game.refresh_board(root);
-//                    break;
-//                case 2:
-//                    rotate_operation(in, board, root);
-//                    game.refresh_board(root);
-//                    break;
-//                case 3:
-//                    smash_operation(in, board, root);
-//                    game.refresh_board(root);
-//                    break;
-//                default:
-//                    break;
-//            }
-//
-//            int score = board.perimeterScore();
-//            System.out.println("Score:  " + score);
-//
-//        }
-//
+        int id = 0;
+        //(6) initialize a loop that will:
+        //ask the user to select an operation
+        // (1 for swap, 2 for rotate, 3 for smash)
+        Scanner in = new Scanner(System.in);
+        while (true)
+        {
+            System.out.println(
+                "ID of the operation 1 for swap, 2 for rotate, 3 for smash");
+            // Scanner in = new Scanner(System.in);
+            id = in.nextInt();
+            switch (id)
+            {
+                case 1:
+                    swap_operation(in, board, root);
+                    game.refresh_board(root);
+                    break;
+                case 2:
+                    rotate_operation(in, board, root);
+                    game.refresh_board(root);
+                    break;
+                case 3:
+                    smash_operation(in, board, root);
+                    game.refresh_board(root);
+                    break;
+                default:
+                    break;
+            }
+
+            int score = board.perimeterScore();
+            System.out.println("Score:  " + score);
+
+        }
+
     }
 
 }

@@ -1,19 +1,20 @@
 import java.awt.*;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 public class Game implements IGame {
 
     private int    max_depth;
-    private Color  target;
+    private Color target;
     private IBlock root;
-
-
+    private List<IBlock> blocks;
     public Game(int max_depth, Color target)
     {
         this.max_depth = max_depth;
         this.target = target;
         this.root = randomInit();
-//        System.out.println(root.getTopLeft() + " " + root.getBotRight() + " " + root.getColor());
+        this.blocks = new ArrayList<>();
+        updateIDs();
     }
 
 
@@ -40,8 +41,6 @@ public class Game implements IGame {
         tmp.smash(max_depth);
         Random rd = new Random();
         while (depth < max_depth) {
-            System.out.println(root.getTopLeft() + ", " + root.getBotRight());
-            System.out.println(tmp.getTopLeft() + ", " + tmp.getBotRight());
             depth++;
             int id = rd.nextInt(4);
             switch(id) {
@@ -78,9 +77,28 @@ public class Game implements IGame {
      */
     @Override
     public IBlock getBlock(int pos) {
-        return null;
+//        if (!updated) {
+//            updateIDs();
+//            updated = true;
+//        }
+        return blocks.get(pos);
     }
 
+    public void updateIDs() {
+        blocks.clear();
+        Queue<IBlock> q = new ArrayDeque<>();
+        q.add(root);
+        while (!q.isEmpty()) {
+            IBlock front = q.poll();
+            blocks.add(front);
+            if (front.isLeaf()) continue;
+            for (IBlock i : front.children()) {
+                q.add(i);
+            }
+        }
+//        updated = true;
+        System.out.println("size: " + blocks.size());
+    }
     /**
      * @return the root of the quad tree representing this
      * blockly board
@@ -103,7 +121,35 @@ public class Game implements IGame {
      */
     @Override
     public void swap(int x, int y) {
+        IBlock f = getBlock(x), s = getBlock(y),
+                fp = ((Block) f).getParent(),
+                sp = ((Block) s).getParent();
+        int fID = ((Block) f).getID(), sID = ((Block) s).getID();
+        if (f.depth() != s.depth()) return;
+        Point ft = f.getTopLeft(), st = s.getTopLeft();
+        int dx = ft.getX() - st.getX();
+        int dy = ft.getY() - st.getY();
+        swapHelper(f, -dx, -dy);
+        swapHelper(s, dx, dy);
+        ((Block) fp).setChild(fID, s);
+        ((Block) sp).setChild(sID, f);
+        updateIDs();
+    }
 
+    public void swapHelper(IBlock blk, int dx, int dy) {
+        Point tl = blk.getTopLeft(),
+                br = blk.getBotRight();
+        System.out.println(tl.getX() + " " + tl.getY() + ", " + + br.getX() + " " + br.getY());
+        tl.setX(tl.getX() + dx);
+        tl.setY(tl.getY() + dy);
+        br.setX(br.getX() + dx);
+        br.setY(br.getY() + dy);
+        System.out.println(dx + " " + dy + ", " + tl.getX() + " " + tl.getY() + ", " + br.getX() + " " + br.getY());
+        if (!blk.isLeaf()) {
+            for (IBlock i : blk.children()) {
+                swapHelper(i, dx, dy);
+            }
+        }
     }
 
     /**
@@ -135,6 +181,6 @@ public class Game implements IGame {
      */
     @Override
     public void setRoot(IBlock root) {
-
+        this.root = root;
     }
 }
