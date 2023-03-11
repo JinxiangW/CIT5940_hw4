@@ -71,6 +71,7 @@ public class Game implements IGame {
                     tmp.smash(maxDepth);
                     break;
                 }
+                default:
             }
         }
         return root;
