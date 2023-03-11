@@ -17,6 +17,14 @@ public class Game implements IGame {
         updateIDs();
     }
 
+    public Game(int max_depth, Color target, IBlock root)
+    {
+        this.max_depth = max_depth;
+        this.target = target;
+        this.root = root;
+        this.blocks = new ArrayList<>();
+        updateIDs();
+    }
 
     /**
      * @return the maximum dept of this blocky board.
@@ -77,10 +85,7 @@ public class Game implements IGame {
      */
     @Override
     public IBlock getBlock(int pos) {
-//        if (!updated) {
-//            updateIDs();
-//            updated = true;
-//        }
+        updateIDs();
         return blocks.get(pos);
     }
 
@@ -96,8 +101,6 @@ public class Game implements IGame {
                 q.add(i);
             }
         }
-//        updated = true;
-        System.out.println("size: " + blocks.size());
     }
     /**
      * @return the root of the quad tree representing this
@@ -133,18 +136,15 @@ public class Game implements IGame {
         swapHelper(s, dx, dy);
         ((Block) fp).setChild(fID, s);
         ((Block) sp).setChild(sID, f);
-        updateIDs();
     }
 
     public void swapHelper(IBlock blk, int dx, int dy) {
         Point tl = blk.getTopLeft(),
                 br = blk.getBotRight();
-        System.out.println(tl.getX() + " " + tl.getY() + ", " + + br.getX() + " " + br.getY());
         tl.setX(tl.getX() + dx);
         tl.setY(tl.getY() + dy);
         br.setX(br.getX() + dx);
         br.setY(br.getY() + dy);
-        System.out.println(dx + " " + dy + ", " + tl.getX() + " " + tl.getY() + ", " + br.getX() + " " + br.getY());
         if (!blk.isLeaf()) {
             for (IBlock i : blk.children()) {
                 swapHelper(i, dx, dy);
@@ -160,7 +160,33 @@ public class Game implements IGame {
      */
     @Override
     public IBlock[][] flatten() {
-        return new IBlock[0][];
+        Point tl = root.getTopLeft(), br = root.getBotRight();
+        int m = br.getX() - tl.getX();
+        int unit = (m / (int) Math.pow(2, max_depth));
+        IBlock[][] matrix = new IBlock[m][m];
+        for (IBlock i : root.children()) {
+            flattenRec(matrix, i, unit);
+        }
+        return matrix;
+    }
+
+    public void flattenRec(IBlock[][] matrix, IBlock blk, int unit) {
+        if (blk.isLeaf()) {
+            flattenHelper(matrix, blk, unit);
+            return;
+        }
+        for (IBlock i : blk.children()) {
+            flattenRec(matrix, i, unit);
+        }
+    }
+
+    public void flattenHelper(IBlock[][] matrix, IBlock blk, int unit) {
+        Point tl = blk.getTopLeft(), br = blk.getBotRight();
+        for (int i = tl.getX(); i < br.getX(); ++i) {
+            for (int j = tl.getY(); j < br.getY(); ++j) {
+                matrix[j / unit][i / unit] = blk;
+            }
+        }
     }
 
     /**
@@ -172,7 +198,35 @@ public class Game implements IGame {
      */
     @Override
     public int perimeterScore() {
-        return 0;
+        IBlock[][] matrix = flatten();
+        int score = 0, m = matrix.length;
+        for (int i = 1; i < m - 1; ++i) {
+            if (matrix[0][i].getColor() == target) {
+                score++;
+            }
+            if (matrix[i][m - 1].getColor() == target) {
+                score++;
+            }
+            if (matrix[m - 1][m - 1 - i].getColor() == target) {
+                score++;
+            }
+            if (matrix[m - 1 - i][0].getColor() == target) {
+                score++;
+            }
+        }
+        if (matrix[0][0].getColor() == target) {
+            score += 2;
+        }
+        if (matrix[0][m - 1].getColor() == target) {
+            score += 2;
+        }
+        if (matrix[m - 1][m - 1].getColor() == target) {
+            score += 2;
+        }
+        if (matrix[m - 1][0].getColor() == target) {
+            score += 2;
+        }
+        return score;
     }
 
     /**

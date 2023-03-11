@@ -35,7 +35,6 @@ public class TestBlockly
         int id = in.nextInt();
         IBlock b = game.getBlock(id);
         b.rotate();
-        ((Game) game).updateIDs();
     }
 
 
@@ -48,11 +47,9 @@ public class TestBlockly
     public static void smash_operation(Scanner in, IGame game, IBlock root)
     {
         System.out.println("ID of block to smash");
-        // in = new Scanner(System.in);
         int id = in.nextInt();
         IBlock b = game.getBlock(id);
         b.smash(game.maxDepth()); // pass max depth variable
-        ((Game) game).updateIDs();
     }
 
 
@@ -85,7 +82,6 @@ public class TestBlockly
         {
             System.out.println(
                 "ID of the operation 1 for swap, 2 for rotate, 3 for smash");
-            // Scanner in = new Scanner(System.in);
             id = in.nextInt();
             switch (id)
             {

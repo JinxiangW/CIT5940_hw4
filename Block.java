@@ -171,7 +171,6 @@ public class Block implements IBlock{
 
         if (top == null) return;
         int dist = botRight.getX() - topLeft.getX();
-//        System.out.println(dist + " " + -dist);
 
         ((Block) tl).rotateHelper(dist, 0);
         ((Block) top).setTopRightTree(tl);
@@ -190,12 +189,10 @@ public class Block implements IBlock{
     public void rotateHelper(int dx, int dy) {
         Point tl = this.topLeft,
                 br = this.botRight;
-//        System.out.println(tl.getX() + " " + tl.getY() + ", " + + br.getX() + " " + br.getY());
         tl.setX(tl.getX() + dx);
         tl.setY(tl.getY() + dy);
         br.setX(br.getX() + dx);
         br.setY(br.getY() + dy);
-//        System.out.println(dx + " " + dy + ", " + tl.getX() + " " + tl.getY() + ", " + br.getX() + " " + br.getY());
         if (!isLeaf()) {
             for (IBlock i : this.children()) {
                 ((Block) i).rotateHelper (dx, dy);
