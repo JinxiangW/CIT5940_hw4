@@ -6,8 +6,6 @@ import java.awt.*;
 import static org.junit.Assert.assertEquals;
 
 public class GameTest {
-
-    private GameFrame gf;
     private Game game;
     @Before
     public void setUp() {
@@ -29,10 +27,6 @@ public class GameTest {
         root.setBotLeftTree(bl);
         root.setBotRightTree(br);
         game = new Game(3, Color.RED, root);
-        gf = new GameFrame();
-        //(4)Add the root of the quadtree to the GUI
-        gf.addQuad(root);
-        gf.display();
     }
 
     @Test
