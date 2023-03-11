@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Block implements IBlock{
+public class Block implements IBlock {
 
     /**
      * ===Representation Invariants ===
@@ -73,8 +73,7 @@ public class Block implements IBlock{
      * @param depth  of this block
      * @param parent of this block
      */
-    public Block(Point topL, Point botR, int depth, Block parent)
-    {
+    public Block(Point topL, Point botR, int depth, Block parent) {
         topLeft = topL;
         botRight = botR;
         this.depth = depth;
@@ -96,7 +95,9 @@ public class Block implements IBlock{
      */
     @Override
     public void smash(int maxDepth) {
-        if (depth == maxDepth) return;
+        if (depth == maxDepth) {
+            return;
+        }
         int tx = topLeft.getX(), ty = topLeft.getY(),
                 bx = botRight.getX(), by = botRight.getY();
 
@@ -169,7 +170,9 @@ public class Block implements IBlock{
                 br = top.getBotRightTree(),
                 bl = top.getBotLeftTree();
 
-        if (top == null) return;
+        if (top == null) {
+            return;
+        }
         int dist = botRight.getX() - topLeft.getX();
 
         ((Block) tl).rotateHelper(dist, 0);
@@ -195,7 +198,7 @@ public class Block implements IBlock{
         br.setY(br.getY() + dy);
         if (!isLeaf()) {
             for (IBlock i : this.children()) {
-                ((Block) i).rotateHelper (dx, dy);
+                ((Block) i).rotateHelper(dx, dy);
             }
         }
     }
@@ -228,7 +231,9 @@ public class Block implements IBlock{
     @Override
     public boolean isLeaf() {
         for (IBlock i : children()) {
-            if (i != null) return false;
+            if (i != null) {
+                return false;
+            }
         }
         return true;
     }
@@ -241,7 +246,6 @@ public class Block implements IBlock{
         int id = 0;
         for (IBlock i : parent.children()) {
             if (i == this) {
-                System.out.println("id: " + id);
                 return id;
             }
             id++;
@@ -303,7 +307,7 @@ public class Block implements IBlock{
     }
 
     public void setChild(int id, IBlock blk) {
-        switch(id) {
+        switch (id) {
             case(0):
                 topLeftTree = blk;
                 ((Block) blk).setParent(this);
@@ -323,6 +327,8 @@ public class Block implements IBlock{
                 botLeftTree = blk;
                 ((Block) blk).setParent(this);
                 break;
+
+            default:
         }
     }
 }

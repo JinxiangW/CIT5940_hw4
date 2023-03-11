@@ -3,7 +3,7 @@ import org.junit.Test;
 
 import java.awt.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class GameTest {
     private Game game;
@@ -41,5 +41,38 @@ public class GameTest {
         IBlock br = game.getBlock(3);
         game.swap(1, 3);
         assertEquals(tl, game.getBlock(3));
+    }
+    @Test
+    public void maxDepth() {
+        assertEquals(3, game.maxDepth());
+    }
+
+    @Test
+    public void randomInit() {
+        game.setRoot(game.randomInit());
+        assertEquals(13, game.getSize());
+    }
+
+    @Test
+    public void getRoot() {
+        assertEquals(Color.BLUE, game.getRoot().getTopLeftTree().getColor());
+    }
+
+    @Test
+    public void flatten() {
+        IBlock[][] matrix = game.flatten();
+        assertEquals(8, matrix.length);
+    }
+
+    @Test
+    public void perimeterScore() {
+        assertEquals(8, game.perimeterScore());
+    }
+
+    @Test
+    public void setRoot() {
+        IBlock newBlk = new Block();
+        game.setRoot(newBlk);
+        assertTrue(game.getRoot().isLeaf());
     }
 }

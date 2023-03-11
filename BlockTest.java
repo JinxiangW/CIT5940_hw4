@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +14,15 @@ public class BlockTest {
     public void setUp() throws Exception {
         blk = new Block(new Point(0, 0),
                 new Point(8, 8),
-                0, null);
+                1, null);
     }
 
     @Test
     public void smash() {
-        assertEquals(true, blk.isLeaf());
+        assertTrue(blk.isLeaf());
         blk.smash(3);
-        assertEquals(false, blk.isLeaf());
-        assertEquals(null, blk.getColor());
+        assertFalse(blk.isLeaf());
+        assertNull(blk.getColor());
     }
 
     @Test
@@ -46,5 +47,55 @@ public class BlockTest {
         assertTrue(blk.isLeaf());
         blk.smash(3);
         assertFalse(blk.isLeaf());
+    }
+    @Test
+    public void depth() {
+        assertEquals(1, blk.depth());
+    }
+
+    @Test
+    public void getColor() {
+        assertNull(blk.getColor());
+    }
+
+    @Test
+    public void getTopLeft() {
+        Point tl = new Point(0, 0);
+        assertEquals(tl.getX(), blk.getTopLeft().getX());
+        assertEquals(tl.getY(), blk.getTopLeft().getY());
+    }
+
+    @Test
+    public void getBotRight() {
+        Point br = new Point(8, 8);
+        assertEquals(br.getX(), blk.getBotRight().getX());
+        assertEquals(br.getY(), blk.getBotRight().getY());
+    }
+
+    @Test
+    public void getTopLeftTree() {
+        assertNull(blk.getTopLeftTree());
+    }
+
+    @Test
+    public void getTopRightTree() {
+        assertNull(blk.getTopRightTree());
+    }
+
+    @Test
+    public void getBotLeftTree() {
+        assertNull(blk.getBotLeftTree());
+    }
+
+    @Test
+    public void getBotRightTree() {
+        assertNull(blk.getBotRightTree());
+    }
+
+    @Test
+    public void setColor() {
+        blk.setColor(Color.BLUE);
+        Color c = blk.getColor();
+        assertEquals(Color.BLUE, c);
     }
 }

@@ -4,22 +4,20 @@ import java.util.List;
 
 public class Game implements IGame {
 
-    private int    max_depth;
+    private int    maxDepth;
     private Color target;
     private IBlock root;
     private List<IBlock> blocks;
-    public Game(int max_depth, Color target)
-    {
-        this.max_depth = max_depth;
+    public Game(int maxDepth, Color target) {
+        this.maxDepth = maxDepth;
         this.target = target;
         this.root = randomInit();
         this.blocks = new ArrayList<>();
         updateIDs();
     }
 
-    public Game(int max_depth, Color target, IBlock root)
-    {
-        this.max_depth = max_depth;
+    public Game(int maxDepth, Color target, IBlock root) {
+        this.maxDepth = maxDepth;
         this.target = target;
         this.root = root;
         this.blocks = new ArrayList<>();
@@ -31,7 +29,7 @@ public class Game implements IGame {
      */
     @Override
     public int maxDepth() {
-        return max_depth;
+        return maxDepth;
     }
 
     /**
@@ -45,31 +43,32 @@ public class Game implements IGame {
     @Override
     public IBlock randomInit() {
         int depth = 0, tx = 0, ty = 0, bx = 8, by = 8;
-        IBlock root = new Block(new Point(tx, ty), new Point(bx, by), depth, null), tmp = root;
-        tmp.smash(max_depth);
+        IBlock root = new Block(new Point(tx, ty), new Point(bx, by), depth, null);
+        IBlock tmp = root;
+        tmp.smash(maxDepth);
         Random rd = new Random();
-        while (depth < max_depth) {
+        while (depth < maxDepth) {
             depth++;
             int id = rd.nextInt(4);
-            switch(id) {
+            switch (id) {
                 case (0): {
                     tmp = tmp.getTopLeftTree();
-                    tmp.smash(max_depth);
+                    tmp.smash(maxDepth);
                     break;
                 }
                 case (1): {
                     tmp = tmp.getTopRightTree();
-                    tmp.smash(max_depth);
+                    tmp.smash(maxDepth);
                     break;
                 }
                 case (2): {
                     tmp = tmp.getBotLeftTree();
-                    tmp.smash(max_depth);
+                    tmp.smash(maxDepth);
                     break;
                 }
                 case (3): {
                     tmp = tmp.getBotRightTree();
-                    tmp.smash(max_depth);
+                    tmp.smash(maxDepth);
                     break;
                 }
             }
@@ -96,11 +95,18 @@ public class Game implements IGame {
         while (!q.isEmpty()) {
             IBlock front = q.poll();
             blocks.add(front);
-            if (front.isLeaf()) continue;
+            if (front.isLeaf()) {
+                continue;
+            }
             for (IBlock i : front.children()) {
                 q.add(i);
             }
         }
+    }
+
+    public int getSize() {
+        updateIDs();
+        return blocks.size();
     }
     /**
      * @return the root of the quad tree representing this
@@ -128,7 +134,9 @@ public class Game implements IGame {
                 fp = ((Block) f).getParent(),
                 sp = ((Block) s).getParent();
         int fID = ((Block) f).getID(), sID = ((Block) s).getID();
-        if (f.depth() != s.depth()) return;
+        if (f.depth() != s.depth()) {
+            return;
+        }
         Point ft = f.getTopLeft(), st = s.getTopLeft();
         int dx = ft.getX() - st.getX();
         int dy = ft.getY() - st.getY();
@@ -162,7 +170,7 @@ public class Game implements IGame {
     public IBlock[][] flatten() {
         Point tl = root.getTopLeft(), br = root.getBotRight();
         int m = br.getX() - tl.getX();
-        int unit = (m / (int) Math.pow(2, max_depth));
+        int unit = (m / (int) Math.pow(2, maxDepth));
         IBlock[][] matrix = new IBlock[m][m];
         for (IBlock i : root.children()) {
             flattenRec(matrix, i, unit);
